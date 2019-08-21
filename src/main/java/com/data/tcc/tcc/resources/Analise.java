@@ -12,9 +12,12 @@ import weka.core.converters.ConverterUtils.DataSource;
 public class Analise {
 
 	@GetMapping
-	public void analisar() throws Exception {
-		DataSource ds = new DataSource("src/resources/vendas.arff");
-		Instances ins = ds.getDataSet();		
+	public void analisar() throws Exception {		
+		
+		DataSource ds = new DataSource("/resources/pedidos.arff");
+		Instances ins = ds.getDataSet();
+		
 		String dados = ins.toString();		
+		
 	}
 }
