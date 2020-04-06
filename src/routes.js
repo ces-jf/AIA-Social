@@ -1,8 +1,17 @@
 import { Router } from 'express';
-import UserController from './controllers/UserController';
+import authMiddleware from './app/middlewares/auth';
+
+import UserControler from './app/controllers/UserController';
+import SessionControler from './app/controllers/SessionController';
 
 const routes = new Router();
 
-routes.post('/users', UserController.store);
+// Usuário não precisa estar logado
+routes.post('/users', UserControler.store);
+routes.post('/sessions', SessionControler.store);
+
+// Usuário precisa estar logado
+routes.use(authMiddleware);
+routes.put('/users', UserControler.update);
 
 export default routes;
