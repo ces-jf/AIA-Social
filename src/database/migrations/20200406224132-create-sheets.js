@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('collections', {
+    return queryInterface.createTable('sheets', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -11,9 +11,13 @@ module.exports = {
         type: Sequelize.STRING(100),
         allowNull: false,
       },
-      hash_name: {
+      path: {
         type: Sequelize.STRING(100),
         allowNull: false,
+      },
+      collection_name: {
+        type: Sequelize.STRING(100),
+        allowNull: true,
       },
       is_private: {
         type: Sequelize.BOOLEAN,
@@ -23,11 +27,11 @@ module.exports = {
       description: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        default: 'Enviado',
       },
       status: {
         type: Sequelize.ENUM('Enviado', 'Erro', 'Sucesso'),
         allowNull: false,
+        defaultValue: 'Enviado',
       },
       user_id: {
         type: Sequelize.INTEGER,
@@ -55,6 +59,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('collections');
+    return queryInterface.dropTable('sheets');
   },
 };
