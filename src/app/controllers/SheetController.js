@@ -56,14 +56,16 @@ class SheetController {
           )
         )
         .pipe(csv.parse({ headers: true, delimiter: ';' }))
-        .on('error', async (error) => {
-          console.log(error);
+        .transform(async (row, next) => {
+          await mongoModel.create(row);
+          next();
+        })
+        .on('error', async () => {
           await Sheet.update(
             { status: 'Erro' },
             { where: { id: sheetCreated.id } }
           );
         })
-        .on('data', (row) => mongoModel.create(row))
         .on('end', async () => {
           await Sheet.update(
             { status: 'Sucesso' },
