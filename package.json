@@ -21,6 +21,7 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.21.6",
     "uuid": "^7.0.3",
+    "ya-csv": "^1.0.0",
     "yup": "^0.28.3"
   },
   "devDependencies": {

@@ -1,11 +1,8 @@
 import * as Yup from 'yup';
-import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
-import * as csv from 'fast-csv';
 import { resolve } from 'path';
-import SheetSchema from '../schemas/Sheet';
 import Sheet from '../models/Sheet';
+import MongoImport from '../services/MongoImport';
 
 class SheetController {
   static async store(req, res) {
@@ -26,8 +23,7 @@ class SheetController {
       if (listErrors) return res.status(401).json({ errors: listErrors });
 
       const uuid = uuidv4();
-
-      const mongoModel = mongoose.model(uuid, SheetSchema);
+      const newFileName = `${uuid}.csv`;
 
       const { name, path, is_private, description, category_id } = req.body;
 
@@ -43,35 +39,15 @@ class SheetController {
         collection_name: uuid,
       });
 
-      await fs
-        .createReadStream(
-          resolve(
-            __dirname,
-            '..',
-            '..',
-            '..',
-            'temp',
-            'uploads',
-            sheetCreated.path
-          )
-        )
-        .pipe(csv.parse({ headers: true, delimiter: ';' }))
-        .transform(async (row, next) => {
-          await mongoModel.create(row);
-          next();
-        })
-        .on('error', async () => {
-          await Sheet.update(
-            { status: 'Erro' },
-            { where: { id: sheetCreated.id } }
-          );
-        })
-        .on('end', async () => {
-          await Sheet.update(
-            { status: 'Sucesso' },
-            { where: { id: sheetCreated.id } }
-          );
-        });
+      const pathFiles = resolve(__dirname, '..', '..', '..', 'temp', 'uploads');
+
+      MongoImport(
+        'aia-social',
+        uuid,
+        resolve(pathFiles, path),
+        resolve(pathFiles, newFileName),
+        sheetCreated.id
+      );
 
       return res.json(sheetCreated);
     } catch ({ message }) {

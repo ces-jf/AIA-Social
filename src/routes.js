@@ -7,6 +7,7 @@ import UserControler from './app/controllers/UserController';
 import CategoryController from './app/controllers/CategoryController';
 import SessionController from './app/controllers/SessionController';
 import SheetController from './app/controllers/SheetController';
+import FileController from './app/controllers/FileController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -21,9 +22,6 @@ routes.put('/users', UserControler.update);
 routes.get('/categories', CategoryController.index);
 routes.post('/categories', CategoryController.store);
 routes.post('/sheets', SheetController.store);
-routes.post('/uploads', upload.single('file'), (req, res) => {
-  const { originalname: name, filename: path } = req.file;
-  return res.json({ name, path });
-});
+routes.post('/uploads', upload.single('file'), FileController.store);
 
 export default routes;

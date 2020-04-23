@@ -11,7 +11,7 @@ const models = [User, Category, Sheet];
 class Database {
   constructor() {
     this.init();
-    this.mongo();
+    // this.mongo();
   }
 
   init() {
