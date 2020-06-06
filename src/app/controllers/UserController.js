@@ -26,7 +26,7 @@ class UserController {
       const user = await User.findOne({
         where: { [Op.or]: [{ email }, { user_name }] },
       });
-      if (user) res.status(401).json({ error: 'User already existis.' });
+      if (user) res.status(401).json({ errors: ['User already existis.'] });
 
       const userCreated = await User.create({
         name,

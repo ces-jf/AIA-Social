@@ -11,7 +11,7 @@ const models = [User, Category, Sheet];
 class Database {
   constructor() {
     this.init();
-    // this.mongo();
+    this.mongo();
   }
 
   init() {
@@ -24,7 +24,7 @@ class Database {
 
   mongo() {
     this.mongoConnection = mongoose.connect(
-      'mongodb://localhost:27017/importacaodb',
+      'mongodb://localhost:27017/aia-social',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,

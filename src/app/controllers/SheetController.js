@@ -1,8 +1,12 @@
 import * as Yup from 'yup';
-import { v4 as uuidv4 } from 'uuid';
+import cryptoRandomString from 'crypto-random-string';
 import { resolve } from 'path';
 import Sheet from '../models/Sheet';
-import MongoImport from '../services/MongoImport';
+import Category from '../models/Category';
+import MongoImport from '../services/MongoService';
+import { Op } from 'sequelize';
+import mongoose from 'mongoose';
+import SheetSchema from '../schemas/Sheet';
 
 class SheetController {
   static async store(req, res) {
@@ -22,7 +26,8 @@ class SheetController {
         });
       if (listErrors) return res.status(401).json({ errors: listErrors });
 
-      const uuid = uuidv4();
+      const uuid = cryptoRandomString({length: 16});
+      
       const newFileName = `${uuid}.csv`;
 
       const { name, path, is_private, description, category_id } = req.body;
@@ -51,6 +56,42 @@ class SheetController {
 
       return res.json(sheetCreated);
     } catch ({ message }) {
+      return res.status(501).json({ error: message });
+    }
+  }
+
+  static async index(req, res) {
+    try {
+      const user_id = req.userId;
+      const result = await Sheet.findAll({
+        attributes: ['id', 'name', 'is_private', 'description', 'collection_name', 'status', 'user_id'], 
+        where: {[Op.or]: [{ user_id }, { is_private: false }]},
+        include: [
+          {
+            model: Category,
+            required: true,
+            attributes: ['name'],
+            as: 'category'
+          }
+        ],
+        order: [['id', 'ASC']]
+      });
+    
+      return res.json({result});
+    } catch ({ message }) {
+      return res.status(501).json({ error: message });
+    }
+  }
+
+  static async update(req, res) {
+    try {
+      const {idCollection, isPrivate} = req.body;
+      const user_id = req.userId;
+
+      const updated = await Sheet.update({is_private: !isPrivate}, {where: {id: idCollection}});
+
+      return res.json({result: updated})
+    }catch ({message}) {
       return res.status(501).json({ error: message });
     }
   }
