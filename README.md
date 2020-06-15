@@ -1,7 +1,7 @@
 # AIA-Social
 Projeto TCC Lucas
 
-<h2>Instruções Docker<h2>
+<h2>Instruções Docker</h2>
 
 Com o Docker instalado em sua máquina, rode os as instruções abaixo para disponibilizar as instâncias de banco de dados necessárias.
 
